@@ -1,0 +1,157 @@
+1.文件I/O:
+	普通I/O:
+		access,open,read,write,lseek,ioctl,dup,dup2,close
+	标准I/O:
+		fopen,fread,fwrite,fseek,fclose
+2.字符串处理：
+	strlen,strcmp,strcat,strcpy,memset,strchr,strstr,atoi,itoa,正则表达式
+3.输入输出流和错误流：
+	printf,sprintf,fprintf,scanf,gets,puts,perror,getchar,putchar
+4.linux中文件类型：
+	' - '：普通文件
+	' d '：目录文件
+	' c '：字符设备文件
+	' b '：块设备文件
+	' l '：符号链接文件
+	' s '：套接字文件
+	' p '：管道文件
+5.杂项：
+	随机数：
+		rand,srand
+	休眠：
+		sleep,usleep
+	申请堆内存(动态内存分配)：
+		malloc,calloc,realloc,free
+6.信号：
+	不可靠信号(非实时信号，标准信号)：
+		在 Linux 系统下，信号值小于 SIGRTMIN(34) 的信号都是不可靠信号
+		设置信号处理方式：
+			signal,sigaction
+		向进程发送信号：
+			kill
+		设置定时器：
+			alarm
+	可靠信号(实时信号)：
+		SIGRTMIN - SIGRTMAX，可靠信号支持排队，不会丢失
+7.进程：
+	程序运行需要通过操作系统的加载器来实现，加载器是操作系统中的程序，当执行程序时，加载器负责将此应用程序加载内存中去执行
+	操作系统下的应用程序在运行 main 函数之前需要先执行一段引导代码，最终由这段引导代码去调用应用程序的 main 函数
+	进程是操作系统分配资源的最小单位
+	进程有单线程进程和多线程进程
+	进程终止函数：
+		atexit 库函数用于注册一个进程在正常终止时要调用的函数，该终止函数只有在调用 exit 时才会被调用
+	进程的内存布局：
+		代码段，数据段，未初始化数据段，栈(向下增长)，堆(向上增长)
+	创建子进程：
+		fork,vfork
+	孤儿进程和僵尸进程：
+		在子进程结束时，父进程需要用到 wait/waitpid 给子进程收尸，如果父进程未给子进程收尸，子进程将成为僵尸进程
+		如果父进程先于子进程结束，子进程将成为孤儿进程被 init 进程收养
+	exec族函数：
+		execl,execlp,execle,execv,execvp,execvpe
+	进程状态：
+		就绪态，运行态，僵尸态，可中断睡眠状态(浅度睡眠)，不可中断睡眠状态(深度睡眠)以及暂停态
+	进程关系：
+		无关系(相互独立)，父子进程关系，进程组以及会话
+		进程组：
+			获取进程对应的进程组 id：
+				getpgrp,getpgid
+			加入一个现有的进程组或创建一个新的进程组：
+				setpgrp,setpgid
+		会话：
+			获取进程的会话 id：
+				getsid
+			创建一个会话：
+				setsid
+	守护进程：
+		pid = gid = sid,守护进程自成会话
+	单例模式和多例模式：
+		使用文件锁实现单例模式：
+			服务器程序使用这种方法来保证程序的单例模式运行，在 Linux 系统中 /var/run/ 目录下有很多以 .pid 为后缀结尾的文件
+	向进程发送信号：
+		kill,sigqueue
+	进程间通信(IPC)：
+8.线程：
+	线程是操作系统调度的最小单位
+	return,pthread_exit,pthread_cancel,exit,_exit,_Exit 退出线程的区别
+		如果进程中的任意线程调用 exit, _exit 或者 _Exit,那么将会导致整个进程终止，这里需要注意！
+		exit 会调用进程终止函数，而 _exit 和 _Exit 不会调用
+	每个线程有自己的线程栈
+	并行，并发和串行
+	获取自己的线程 id：
+		pthread_self
+	创建新的线程：
+		pthread_create
+	终止线程：
+		pthread_exit,return,pthread_cancel
+	回收线程：
+		pthread_join,如果一个线程结束后未被其他线程调用 pthread_join 回收，将会成为僵尸线程，僵尸线程除了可以被其他线程回收，还可以随着进程一起被回收
+	取消点：
+		许多函数都可以作为取消点，当没有取消点时，可以使用 pthread_testcancel 函数产生取消点
+	分离线程：
+		 pthread_detach，分离线程后，该线程终止时会自动回收资源
+	 线程清理处理函数：
+		线程通过函数 pthread_cleanup_push 和 pthread_cleanup_pop 分别负责向调用线程的清理函数栈中添加和移除清理函数
+		清理函数栈中的清理函数执行的条件：
+			线程调用 pthread_exit 退出时，线程响应取消请求时，用非 0 参数调用 pthread_cleanup_pop
+	线程安全：
+		线程栈：
+			每个线程都有自己独立的栈空间，因此局部变量互不干扰
+		可重入函数：
+			该函数被多个执行流(包括由信号处理函数所产生的执行流)同时调用是否总能产生正确的结果，如果每次都能产生预期的结果则表示该函数是一个可重入函数
+		线程安全函数：
+			该函数被多个线程(不包括由信号处理函数所产生的执行流)同时调用是否总能产生正确的结果，如果每次都能产生预期的结果则表示该函数是一个线程安全函数
+	一次性初始化：
+		pthread_once
+	线程特有数据：
+		 pthread_key_create,pthread_setspecific 以及 pthread_getspecific
+	线程局部存储：
+		__thread
+	线程与信号：
+		线程的信号掩码：
+			pthread_sigmask 和 sigprocmask 的区别：
+				sigprocmask 只能用于单线程进程，fork 的子进程拥有一份屏蔽信号拷贝
+				pthread_sigmask 用于多线程，pthread_create 的新线程拥有一份屏蔽信号拷贝
+			多线程和单线程处理信号的原则不同：
+				单线程处理信号的方式：
+					先注册信号处理函数，当信号异步发生时，调用处理函数来处理信号
+					信号处理函数的实现，有着许多的限制：
+						比如有一些函数不能在信号处理函数中调用
+						再比如一些函数调用时会被异步的信号给中断(interrupt)
+				多线程处理信号的方式：
+					将对信号的异步处理，转换成同步处理
+					也就是说 —— 用一个线程专门的来"同步等待"信号的到来，而其它的线程可以完全不被该信号中断/打断(interrupt)
+		向线程发送信号：
+			 pthread_kill,pthread_sigqueue 向同一进程中的某个指定的线程发送信号
+		异步信号安全函数：
+			可以通过 man 7 signal 来查询
+			按照严格程度从强到弱排序：
+				可重入函数，异步信号安全函数，线程安全函数
+				可以为线程安全函数所在的线程设置信号掩码，使其成为异步信号安全函数
+	线程同步：
+		对共享资源的访问进行保护
+		互斥锁：
+			pthread_mutex_t
+			互斥锁初始化：
+				使用 PTHREAD_MUTEX_INITIALIZER 宏初始化互斥锁(静态初始化)
+				使用 pthread_mutex_init 函数初始化互斥锁(动态初始化)
+			互斥锁加锁和解锁：
+				pthread_mutex_lock(阻塞),pthread_mutex_trylock(非阻塞),pthread_mutex_unlock
+			销毁互斥锁：
+				pthread_mutex_destroy,动态初始化需要销毁，而静态初始化不需要销毁，在程序结束时会自动释放
+			避免互斥锁死锁的方法：
+				定义互斥锁的层级关系
+		条件变量：
+			pthread_cond_t 
+			条件变量初始化：
+				使用宏 PTHREAD_COND_INITIALIZER 
+				使用函数 pthread_cond_init
+			
+			
+		
+		
+	
+	
+	
+		
+
