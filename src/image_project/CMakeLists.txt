@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.5)
+project(image_project)
+message(STATUS "CMake version: " ${CMAKE_VERSION})
+message(STATUS "CMake system name: " ${CMAKE_SYSTEM_NAME})
+message(STATUS "CMake system processor: " ${CMAKE_SYSTEM_PROCESSOR})
+add_subdirectory(src)

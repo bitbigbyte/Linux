@@ -1,0 +1,5 @@
+/home/xiaoke/linux/IMX6ULL/C_Program/image_project/build/CMakeFiles/edit_cache.dir
+/home/xiaoke/linux/IMX6ULL/C_Program/image_project/build/CMakeFiles/rebuild_cache.dir
+/home/xiaoke/linux/IMX6ULL/C_Program/image_project/build/src/CMakeFiles/image_player.dir
+/home/xiaoke/linux/IMX6ULL/C_Program/image_project/build/src/CMakeFiles/edit_cache.dir
+/home/xiaoke/linux/IMX6ULL/C_Program/image_project/build/src/CMakeFiles/rebuild_cache.dir
